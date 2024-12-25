@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #191919; /* Set body background color */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+        }
+
+        /* Container for the iframe and the overlay */
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 300px; 
+            overflow: hidden; /* Hide any overflow content */
+        }
+        
+        /* Styles for the iframe */
+        iframe {
+            width: 100%;
+            height: 100%; 
+            border: none;
+            overflow: hidden; /* Hide any overflow content within the iframe */
+        }
+        
+        /* Overlay to cover the watermark */
+        .watermark-cover {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: #191919;
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white; /* White background for the loading overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1; /* Ensure it is above the iframe */
+        }
+        
+        /* Logo styles */
+        .logo {
+            width: 100px; /* Adjust the size as needed */
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="iframe-container">
+        <iframe id="chart-iframe" src="https://chartbrick.com/embed/cm53s47fx09ozlr0fkutvweco"></iframe>
+        <div class="watermark-cover"></div>
+        <div id="loading-overlay" class="loading-overlay">
+            <img src="/logo.png" alt="Loading..." class="logo">
+        </div>
+    </div>
+
+    <script>
+        // Function to resize the iframe based on its content height
+        function resizeIframe() {
+            var iframe = document.getElementById('chart-iframe');
+            try {
+                var iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+                var iframeContentHeight = Math.max(
+                    iframeDocument.body.scrollHeight, 
+                    iframeDocument.documentElement.scrollHeight,
+                    iframeDocument.body.offsetHeight, 
+                    iframeDocument.documentElement.offsetHeight,
+                    iframeDocument.body.clientHeight, 
+                    iframeDocument.documentElement.clientHeight
+                );
+                iframe.style.height = iframeContentHeight + 'px';
+            } catch (e) {
+                console.warn("Unable to access iframe content for resizing: ", e);
+            }
+        }
+
+        // Wait for the iframe to load
+        document.getElementById('chart-iframe').onload = function() {
+            setTimeout(function() {
+                // Hide the loading overlay after 5 seconds
+                document.getElementById('loading-overlay').style.display = 'none';
+                // Resize iframe after content is loaded
+                resizeIframe();
+            }, 5000); // 5000 milliseconds = 5 seconds
+        };
+
+        // Resize iframe when the window is resized (optional)
+        window.addEventListener('resize', resizeIframe);
+    </script>
+</body>
+</html>
